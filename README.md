@@ -21,8 +21,8 @@ Simar & Zelenyuk (2006) propose a modification of this test for use with DEA eff
 <code>
   TES = smootheffscorebeforelitest(TE,ninputs,noutputs,alpha,effval)
 </code>
-where the arguments are:
 
+where the arguments are:
 - TE: (k x 1) vector of DEA efficiency scores;
 - ninputs: number of inputs;
 - noutputs: number of outputs;
