@@ -3,6 +3,8 @@ Utility functions for Data Envelopment Analysis (DEA)
 
 This repository will host various utility functions that one may need when doing a DEA analysis.
 
+If you use any of these functions in your own work, then please acknowledge my work whenever possible.
+
 ## Nonparametric kernel density test for testing equality of densities
 Currently, it contains a MATLAB implementation of the nonparametric kernel density test of Li et al. (2009) in the function "litest2009". This function can be used as follows:
 
