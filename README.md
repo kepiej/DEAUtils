@@ -1,7 +1,7 @@
 # DEAUtils
-Utility functions for Data Envelopment Analysis (DEA)
+Utilities for Data Envelopment Analysis (DEA)
 
-This repository will host various utility functions that one may need when doing a DEA analysis.
+This repository will host various utilities that one may need when doing a DEA analysis.
 
 If you use any of these functions in your own work, then please acknowledge my work whenever possible.
 
