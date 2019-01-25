@@ -18,6 +18,14 @@ The function returns 3 arguments:
 - <code>p</code> the p-value obtained by a bootstrapping procedure using <code>nboot</code> bootstrap iterations. See Li et al.(2009) for details.
 - <code>Tn</code> the computed test statistic.
 
+The function might print this warning message during computation while still finishing successfully:
+
+>Exiting: Maximum number of function evaluations has been exceeded
+>         - increase MaxFunEvals option.
+>         Current function value: XXXXX
+
+The warning message originates from optimizing the bandwidth smoothing parameter over an unbounded interval. The warning message indicates that this search does not converge fast enough, so the optimization is restarted from the rule-of-thumb bandwidth but now limiting the search interval. The result should still be reliable though. The warning message is printed to give full transparency to the user.
+
 Simar & Zelenyuk (2006) propose a modification of this test for use with DEA efficiency scores. The function "smootheffscorebeforelitest" implements their "Algorithm II". See Simar & Zelenyuk (2006) for details. The function needs to be called before using the above mentioned <code>litest2009</code> as follows:
 
 <code>
