@@ -1,4 +1,4 @@
-function [h,p,Tn] = litest2009(X,Y,varargin)
+function [h,p,Tn,exitflag,bw] = litest2009(X,Y,varargin)
 %   Nonparametric similarity of distribution test of two unknown density 
 %   functions as described in:
 %
@@ -11,7 +11,7 @@ function [h,p,Tn] = litest2009(X,Y,varargin)
 %
 %   Author: Pieter Jan Kerstens, 2017
 %
-%   [h,p,Tn] = litest2009(X,Y,alpha,nboot)
+%   [h,p,Tn,exitflag,bw] = litest2009(X,Y,alpha,nboot)
 %       X,Y: (n1 x p) and (n2 x p) matrices containing the two samples of the two unknown
 %       densities
 %       alpha: significance level (optional, default = 0.05)
@@ -22,6 +22,8 @@ function [h,p,Tn] = litest2009(X,Y,varargin)
 %           h = 1 => Reject the null hypothesis at the (100*alpha)% significance level.
 %       p: p-value obtained by bootstrapping (see Li et al.(2009) for details)
 %       Tn: test statistic
+%       exitflag: exitflag from the bandwidth optimization
+%       bw: the kernel bandwidth
 %
 %   See also: smootheffscorebeforelitest
 
@@ -60,24 +62,25 @@ function [h,p,Tn] = litest2009(X,Y,varargin)
     end
     
     % Cross-validation
-    [h,~,exitflag] = fminsearch(@lscv,starth);
+    opt = optimset('Display','off');
+    [bw,~,exitflag] = fminsearch(@lscv,starth,opt);
     if(exitflag ~= 1)
         % Try again with limited search
-        [h,~,exitflag] = fminbnd(@lscv,0.1.*starth,10.*starth);
+        [bw,~,exitflag] = fminbnd(@lscv,0.1.*starth,10.*starth);
         if(exitflag < 1)
-            warning('litest2009:h','Cross-validation did not find optimal bandwidth h! Using rule-of-thumb instead!');
-            h = starth;
+            warning('litest2009:bw','Cross-validation did not find optimal bandwidth bw! Using rule-of-thumb instead!');
+            bw = starth;
         end
     end
     
     % Compute test statistic
-    Tn = litesthelper(X,Y,@(U,V) prodkernelest(kernelest,U,V,h),h);
+    Tn = litesthelper(X,Y,@(U,V) prodkernelest(kernelest,U,V,bw),bw);
     
     % Apply bootstrap procedure on pooled sample Z to approximate
     % empirical distribution of test statistic Tn
     Tnboot = NaN(1,nboot);
     parfor nb=1:nboot
-        Tnboot(nb) = litesthelper(datasample(Z,size(X,1)),datasample(Z,size(Y,1)),@(U,V) prodkernelest(kernelest,U,V,h),h);
+        Tnboot(nb) = litesthelper(datasample(Z,size(X,1)),datasample(Z,size(Y,1)),@(U,V) prodkernelest(kernelest,U,V,bw),bw);
     end
     
     % Determine p-value from the empirical bootstrap distribution
