@@ -9,10 +9,10 @@ If you use any of these functions in your own work, then please acknowledge my w
 Currently, it contains a MATLAB implementation of the nonparametric kernel density test of Li et al. (2009) in the function "litest2009". This function can be used as follows:
 
 <code>
-[h,p,Tn,exitflag,bw] = litest2009(X,Y,alpha,nboot)
+[h,p,Tn,exitflag,bw] = litest2009(X,Y,alpha,nboot,bwmethod)
 </code>
 
-where <code>X</code> and <code>Y</code> are i.i.d samples of some dimension p, but possibly with different sample sizes. <code>alpha</code> is the desired significance level (default = 0.05) and <code>nboot</code> the number of bootstrap samples (default = 2000). The null hypothesis states that both densities of samples <code>X</code> and <code>Y</code> are equal.
+where <code>X</code> and <code>Y</code> are i.i.d samples of some dimension p, but possibly with different sample sizes. <code>alpha</code> is the desired significance level (default = 0.05), <code>nboot</code> the number of bootstrap samples (default = 2000) and <code>bwmethod</code> the bandwidth selection method (default = 'lscv'). The null hypothesis states that both densities of samples <code>X</code> and <code>Y</code> are equal. Bandwidth tuning is performed using either least-squares ('lscv') or maximum likelihood ('mlcv') cross-validation.
 The function returns 5 arguments:
 - <code>h</code> the result of the hypothesis test: h = 0 means the null hypothesis cannot be rejected at the given significance level <code>alpha</code>. h = 1 means the null hypothesis is rejected at the given significance level.
 - <code>p</code> the p-value obtained by a bootstrapping procedure using <code>nboot</code> bootstrap iterations. See Li et al.(2009) for details.
