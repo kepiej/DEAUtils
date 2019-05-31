@@ -9,13 +9,16 @@ function [h,p,Tn,exitflag,bw] = litest2009(X,Y,varargin)
 %   The unknown densities are estimated using kernel density estimation and
 %   p-values are obtained through a bootstrapping procedure by resampling from a pooled sub-sample.
 %
-%   Author: Pieter Jan Kerstens, 2017
+%   Author: Pieter Jan Kerstens, 2017-2019
 %
-%   [h,p,Tn,exitflag,bw] = litest2009(X,Y,alpha,nboot)
+%   [h,p,Tn,exitflag,bw] = litest2009(X,Y,alpha,nboot,bwmethod)
 %       X,Y: (n1 x p) and (n2 x p) matrices containing the two samples of the two unknown
 %       densities
 %       alpha: significance level (optional, default = 0.05)
 %       nboot: number of bootstrap iterations (optional, default = 2000)
+%       bwmethod: objective function for bandwidth tuning (optional,
+%       default = 'lscv'). Choose from least-squares ('lscv') or maximum likelihood
+%       ('mlcv') cross-validation.
 %
 %       h: h indicates the result of the hypothesis test:
 %           h = 0 => Do not reject the null hypothesis at the (100*alpha)% significance level.
@@ -28,12 +31,12 @@ function [h,p,Tn,exitflag,bw] = litest2009(X,Y,varargin)
 %   See also: smootheffscorebeforelitest
 
 
-    defopt = {0.05,2000};
+    defopt = {0.05,2000,'lscv'};
     defopt(1:length(varargin)) = varargin;
-    [alpha,nboot] = defopt{:};
+    [alpha,nboot,bwmethod] = defopt{:};
 
     assert(size(X,2) == size(Y,2),'X and Y must have the same number of columns p!');
-        
+    
     % Kernel function
     kernelft = @(t) exp(-(t.^2)/2)./sqrt(2*pi);
     % Two-fold convolution kernel
@@ -55,6 +58,25 @@ function [h,p,Tn,exitflag,bw] = litest2009(X,Y,varargin)
         res = (sum(sum(prodkernelest(kernelconvest,Z,Z,t)))/(N^2)) - (2/(N*(N-1)))*sum(sum(temp));
     end
 
+    % Likelihood cross-validation
+    function res = mlcv(t)
+        temp = prodkernelest(kernelest,Z,Z,t);
+        temp(logical(eye(size(temp)))) = 0;
+        res = -sum(sum(log(temp)))/(N-1);
+    end
+
+    % Set objective function for bandwidth tuning
+    % Note: using str2func is more elegant but it does not work for nested
+    % functions!
+    if(strcmpi(bwmethod, 'lscv'))
+        bwmethod = @lscv;
+    elseif(strcmpi(bwmethod, 'mlcv'))
+        bwmethod = @mlcv;
+    else
+        warning('litest2009:bwmethod','Unknown bwmethod! Using least-squares cross-validation, the default, instead!');
+        bwmethod = @lscv;
+    end
+
     % Rule-of-thumb bandwidth
     starth = 0.9.*min([std(Z); iqr(Z)/1.349].*N^(-1/5),[],1);
     if(any(starth <= 1e-12))
@@ -63,10 +85,10 @@ function [h,p,Tn,exitflag,bw] = litest2009(X,Y,varargin)
     
     % Cross-validation
     opt = optimset('Display','off');
-    [bw,~,exitflag] = fminsearch(@lscv,starth,opt);
+    [bw,~,exitflag] = fminsearch(bwmethod,starth,opt);
     if(exitflag ~= 1)
         % Try again with limited search
-        [bw,~,exitflag] = fminbnd(@lscv,0.1.*starth,10.*starth);
+        [bw,~,exitflag] = fminbnd(bwmethod,0.1.*starth,10.*starth);
         if(exitflag < 1)
             warning('litest2009:bw','Cross-validation did not find optimal bandwidth bw! Using rule-of-thumb instead!');
             bw = starth;
