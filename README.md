@@ -48,6 +48,8 @@ Note that productivity scores need not be smoothed, because these are not bounde
 ### Limitations
 The <code>litest2009</code> implementation can only handle continuous data at the moment. If there is any interest then I might implement support for categorical data in the future.
 
+### Acknowledgements
+I gratefully acknowledge Qianying Jin for reporting strange results in some cases when using the least-squares cross-validation method. This led me to add the maximum likelihood cross-validation as a bandwidth selection method.
 
 ## References
 * Qi Li, Esfandiar Maasoumi & Jeffrey S. Racine (2009) "A nonparametric test for equality of distributions with mixed categorical and continuous data", Journal of Econometrics, 148, 186-200, DOI: http://dx.doi.org/10.1016/j.jeconom.2008.10.007
