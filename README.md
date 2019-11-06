@@ -1,7 +1,7 @@
 # DEAUtils
 Utilities for Data Envelopment Analysis (DEA)
 
-<img alt="GitHub All Releases" src="https://img.shields.io/github/downloads/kepiej/DEAUtils/total">
+![GitHub All Releases](https://img.shields.io/github/downloads/kepiej/DEAUtils/total)
 
 This repository will host various utilities that one may need when doing a DEA analysis.
 
