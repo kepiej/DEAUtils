@@ -48,7 +48,7 @@ The function returns the "smoothed" efficiency scores in the vector <code>TES</c
 Note that productivity scores need not be smoothed, because these are not bounded!
 
 ### Limitations
-The <code>litest2009</code> implementation can only handle continuous data at the moment. If there is any interest then I might implement support for categorical data in the future.
+The <code>litest2009</code> implementation can only handle continuous data at the moment. Furthermore, the test is for unconditional densities only. If there is any interest then I might implement support for categorical data and conditional densities in the future.
 
 ### Acknowledgements
 I gratefully acknowledge Qianying Jin for reporting strange results in some cases when using the least-squares cross-validation method. This led me to add the maximum likelihood cross-validation as a bandwidth selection method.
